@@ -181,9 +181,9 @@ class MiscSlashCog(Cog):
         def formula(n, precision, inverse):
             mp.dps = precision
             formula_result = (
-                    mpf('150') +
-                    mpf('1000') * exp(mpf('-0.02') * mpf(n)) +
-                    mpf('100') * exp(mpf('-0.001') * mpf(n))
+                    mpf('100') +
+                    mpf('300') * exp(mpf('-0.05') * mpf(n)) +
+                    mpf('100') * exp(mpf('-0.01') * mpf(n))
             )
             return 1 / formula_result if inverse else formula_result
 
