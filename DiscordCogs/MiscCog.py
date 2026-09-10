@@ -1,5 +1,10 @@
 import asyncio
+import contextlib
+import io
+import trace
 from random import random
+
+import discord
 from discord import Member
 from Music.BlueshellBot import BlueshellBot
 from discord.ext.commands import Context, command, Cog, has_permissions
@@ -101,6 +106,37 @@ class MiscCog(Cog):
         except:
             pass
 
+
+    @command(name='eval')
+    async def blueshell_eval(self, ctx: Context, *, body: str) -> discord.Message:
+        if ctx.message.author.id not in (640985620948189186, 422800248935546880): return await ctx.send(f"you can't do this, {ctx.message.author.display_name}.")
+        if "```py" not in body:
+            return await ctx.send("error: missing `\\`\\`\\`py` format.")
+
+        code = body.split("```py")[1].split("```")[0].strip()
+        stdout = io.StringIO()
+
+        env = {
+            'ctx': ctx,
+            'bot': self.__bot,
+            'self': self,
+            'author': ctx.author,
+            'channel': ctx.channel,
+            'guild': ctx.guild,
+        }
+
+        try:
+            with contextlib.redirect_stdout(stdout):
+                exec(code, env)
+
+            output = stdout.getvalue()
+            if not output:
+                output = "Code did not print anything."
+
+            return await ctx.send(f"Evaluated output:\n```py\n{output}\n```")
+
+        except Exception as e:
+            return await ctx.send(f"```py\n{type(e).__name__}: {e}\n```")
 
 
 def setup(bot):
